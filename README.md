@@ -12,14 +12,17 @@ Try running the following commands:
 - #### **dbt init**
 
   Command: `dbt init my_project`
+
   Initializes a new dbt project named `my_project` in the current directory.
 
 - #### **dbt run**
 
   Command: `dbt run`
+
   Executes the SQL code defined in your dbt models to create or update tables/views in your data warehouse.
 
   Command: `dbt run -s v_customers.sql` 
+
   Execute one model at a time v_customers.sql is the model name
   
 

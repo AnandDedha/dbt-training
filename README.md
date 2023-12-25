@@ -18,6 +18,7 @@ Try running the following commands:
 - #### **dbt run**
 
   Command: `dbt run`
+  Command: `dbt run -s v_customers.sql` Execute one model at a time
 
   Explanation: Executes the SQL code defined in your dbt models to create or update tables/views in your data warehouse.
 

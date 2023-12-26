@@ -44,6 +44,16 @@ Try running the following commands:
 
   Compiles dbt models into raw SQL without running them in the database. This helps catch syntax errors before execution.
 
+- #### **dbt docs**
+
+  Command: `dbt docs generate`
+
+  Run dbt docs generate to generate the documentation for your project.
+
+  Command: `dbt docs serve`
+  
+  Run dbt docs serve command to launch the documentation.
+
 #### Example Usage:
 
 ```markdown

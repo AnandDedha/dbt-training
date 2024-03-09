@@ -1,1 +1,218 @@
+https://datacoves.com/post/dbt-jinja-cheat-sheet
 
+Expressions {{ ... }}: Expressions are used when you want to output a string. You can use expressions to reference variables and call macros.
+
+Statements {% ... %}: Statements don't output a string. They are used for control flow, for example, to set up for loops and if statements, to set or modify variables, or to define macros.
+
+Comments {# ... #}: Jinja comments are used to prevent the text within the comment from executing or outputting a string.
+
+```markdown
+# dbt Jinja: Basic syntax
+
+This is the foundational syntax of Jinja, from how to comment to the difference between statements and expressions.
+
+## Basic Syntax
+
+### Comments
+```
+{#  Example Comment  #}
+```
+
+### Statements
+```
+{% … %} 
+```
+e.g.: for, if
+
+### Expressions
+```
+{{ … }} 
+```
+e.g.: ref(), source()
+
+## Variable Assignment
+
+Define and assign variables in different data types such as strings, lists, and dictionaries.
+
+### Strings
+```
+{% set my_string = "example" %}
+```
+
+### Lists
+```
+{% set my_list = ["apple", "lemon"] %}
+```
+
+### Dictionaries
+```
+{% set my_dict = {"fruit_1": "apple",
+                   "fruit_2": "lemon"} %}
+```
+
+## White Space Control
+
+Jinja allows fine-grained control over white spaces in compiled output. Understand how to strategically strip or maintain spaces.
+
+### Strip Before
+```
+{%- ... %}
+```
+
+### Strip After
+```
+{% ... -%}
+```
+
+### String Before and After
+```
+{%- ... -%}
+```
+
+## Control flow
+
+In dbt, conditional structures guide the flow of transformations. Grasp how to integrate these structures seamlessly.
+
+### If/elif/else/endif
+```
+{%- if target.name == 'dev' -%}
+{{ some code }}
+{%- elif target.name == 'prod' -%}
+{{ some other code }}
+{%- else -%}
+{{ some other code }}
+{%- endif -%}
+```
+
+## Looping
+
+Discover how to iterate over lists and dictionaries. Understand simple loop syntax or accessing loop properties.
+
+### Loop Syntax
+```
+{%- for item in my_iterable -%}
+  --Do something with item
+  {{ item }}
+{%- endfor -%}
+```
+
+### Loop Properties
+- **loop.last**: This boolean is False unless the current iteration is the last iteration.
+- **loop.first**: A boolean that is True if the current iteration is the first iteration, otherwise False.
+- **loop.index**: An integer representing the current iteration of the loop (1-indexed).
+
+## Operators
+
+These logical and comparison operators come in handy, especially when defining tests or setting up configurations in dbt.
+
+### Logic Operators
+- **and**: `{% if condition1 and condition2 %}`
+- **or**: `{% if condition1 or condition2 %}`
+- **not**: `{{  not condition1 }}`
+
+### Comparison Operators
+- **Equal To**: `{% if 1 == 2 %}`
+- **Not Equal To**: `{% if 1 != 2 %}`
+- **Greater Than**: `{% if 1 > 2 %}`
+- **Less Than**: `{% if 1 < 2 %}`
+- **Greater Than or Equal to**: `{% if 1 >= 2 %}`
+- **Less Than or Equal To**: `{% if 1 <= 2 %}`
+
+## Variable tests
+
+Within dbt, you may need to validate if a variable is defined or if a value is odd or even. These Jinja Variable tests allow you to validate with ease.
+
+### Jinja Variable Tests
+- **Is Defined**: `{% if my_variable is defined %}`
+- **Is None**: `{% if my_variable is none %}`
+- **Is Even**: `{% if my_variable is even %}`
+- **Is Odd**: `{% if my_variable is odd %}`
+- **Is a String**: `{% if my_variable is string %}`
+- **Is a Number**: `{% if my_variable is number %}`
+
+## Creating macros & tests
+
+Macros are the backbone of advanced dbt workflows. Review how to craft these reusable code snippets and also how to enforce data quality with tests.
+
+### Define a Macro
+Write your macros in your project's macros directory.
+```sql
+{% macro ms_to_sec(col_name, precision=3) %}   
+  ( {{ col_name }} / 1000 )::numeric(16, {{ precision }})   
+{% endmacro %}
+```
+
+### Use a Macro from a Model
+```
+In a model:
+SELECT order_id,       
+  {{ ms_to_sec(col_name=time_ms, precision=3) }} as time_sec
+FROM order_timings;
+```
+
+### Run a Macro from the Terminal
+Define in your macros directory.
+```sql
+{% macro create_schema(schema_name) %}
+    CREATE SCHEMA IF NOT EXISTS {{ schema_name }};
+{% endmacro %}
+```
+In Terminal:
+```
+dbt run-operation create_schema --args '{"schema_name": "my_new_schema"}'
+```
+
+### Define a Generic Test
+```
+Define in the tests/generic directory.
+{% test over_10000(model, column_name) %}
+  SELECT {{column_name}} 
+  FROM {{ model }}   
+  WHERE {{column_name}} > 10000     
+{% endtest %}
+```
+
+### Use a Generic test
+```
+In models/schema.yml add the generic test to the model and column you wish to test.
+```
+
+### Define a Singular Test
+```
+Write your dbt Singular tests in the tests directory and give it a descriptive name.
+```sql
+SELECT order_id, 
+SUM(CASE
+    WHEN amount < 0 THEN amount 
+    ELSE 0 
+    END) as total_refunded_amount,       
+COUNT(CASE 
+     WHEN amount < 0 THEN 1 
+     END) as number_of_refunds  
+FROM {{ ref('my_model') }}  
+GROUP BY 1   
+HAVING number_of_refunds > 5
+```
+
+## Filters (aka Methods)
+
+Fine-tune your dbt data models with these transformation and formatting utilities.
+
+### String Manipulation
+- **Lower**: `{{ "DATACOVES" | lower }} => "datacoves"`
+- **Upper**: `{{ "datacoves" | upper }} => "DATACOVES"`
+- **Default**: `{{ variable_name | default("Default Value") }}`
+- **Trim**: `{{ "Datacoves   " | trim }} => "Datacoves"`
+- **Replace**: `{{ "Datacoves" | replace("v", "d") }} => "Datacodes"`
+- **Length**: `{{ "Datacoves" | length }} => 9`
+- **Capitalize**: `{{ "datacoves" | capitalize }} => "Datacoves"`
+- **Repeat a String**: `{{ print('-' * 20) }}`
+- **Substring**: `{{ "Datacoves"[0:4] }} => "Data"`
+- **Split**: `{{ "Data coves".split(' ') }} => ["Data", "coves"]`
+
+### Number Manipulation
+- **Int**: `{{ "20" | int }} => 20`
+- **Float**: `{{ 20 | float }} => 20.0`
+- **Rounding to Nearest Whole Number**: `{{ 20.1434 | round }} => 21`
+- **Rounding to a Specified Decimal Place**: `{{ 20.1434 | round(2) }} => 20.14`
+- **Rounding Down (Floor Method)**: `{{ 20.5 | round(method='floor') }} => 20

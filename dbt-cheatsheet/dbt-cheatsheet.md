@@ -1,34 +1,12 @@
 https://datacoves.com/post/dbt-jinja-cheat-sheet
 
-Expressions {{ ... }}: Expressions are used when you want to output a string. You can use expressions to reference variables and call macros.
+Expressions {{ ... }}: Expressions are used when you want to output a string. You can use expressions to reference variables and call macros. e.g.: ref(), source(), var()
 
-Statements {% ... %}: Statements don't output a string. They are used for control flow, for example, to set up for loops and if statements, to set or modify variables, or to define macros.
+Statements {% ... %}: Statements don't output a string. They are used for control flow, for example, to set up for loops and if statements, to set or modify variables, or to define macros. e.g.: for, if
 
 Comments {# ... #}: Jinja comments are used to prevent the text within the comment from executing or outputting a string.
 
-```markdown
-# dbt Jinja: Basic syntax
 
-This is the foundational syntax of Jinja, from how to comment to the difference between statements and expressions.
-
-## Basic Syntax
-
-### Comments
-```
-{#  Example Comment  #}
-```
-
-### Statements
-```
-{% … %} 
-```
-e.g.: for, if
-
-### Expressions
-```
-{{ … }} 
-```
-e.g.: ref(), source()
 
 ## Variable Assignment
 

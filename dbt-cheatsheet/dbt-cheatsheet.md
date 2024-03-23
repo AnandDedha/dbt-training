@@ -78,8 +78,31 @@ Discover how to iterate over lists and dictionaries. Understand simple loop synt
 
 ### Loop Properties
 - **loop.last**: This boolean is False unless the current iteration is the last iteration.
+```
+{% for item in list %}
+  {% if loop.last %}   
+    --This is the last item
+    {{ item }}
+  {% endif %}
+{% endfor %}
+```
 - **loop.first**: A boolean that is True if the current iteration is the first iteration, otherwise False.
-- **loop.index**: An integer representing the current iteration of the loop (1-indexed).
+```
+{% for item in list %}
+  {% if loop.first %}
+    --first item
+    {{ item }}
+  {% endif %}
+{% endfor %}
+```
+- 
+- **loop.index**: An integer representing the current iteration of the loop (1-indexed).So, the first iteration would have loop.index of 1, the second would be 2, and so on.
+```
+{% for item in list %}
+   --This is item number
+   {{ loop.index }}
+{% endfor %}
+```
 
 ## Operators
 
